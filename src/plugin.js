@@ -11,7 +11,6 @@ const TAG_SUFFIX = '*/';
 
 /**
  * @param {string} content
- *
  * @return {string}
  *
  * @throws Error
@@ -42,20 +41,23 @@ function WebpackRemoveBlocks(content) {
 
 /**
  * @param {string} mode
- *
  * @return {boolean}
  */
 function shouldSkipProcessing(mode) {
   return EXCLUDE_MODES.includes(mode);
 }
 
+/**
+ * @param {Object} options
+ * @param {Array<string|Object>|undefined} [options.blocks]
+ * @returns {boolean}
+ */
 function shouldUseDefaults(options) {
   return isEmptyObject(options) || isEmptyArray(options.blocks);
 }
 
 /**
  * @param {string} [name=DEFAULT_NAME]
- *
  * @return {Object}
  */
 function generateDefaultBlock(name = DEFAULT_NAME) {
