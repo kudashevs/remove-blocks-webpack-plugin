@@ -54,13 +54,13 @@ function shouldUseDefaults(options) {
 }
 
 /**
- * @param {string} label
+ * @param {string} [name=DEFAULT_NAME]
  *
  * @return {Object}
  */
-function generateDefaultBlock(label = DEFAULT_NAME) {
+function generateDefaultBlock(name = DEFAULT_NAME) {
   return {
-    name: `${label}`,
+    name: `${name}`,
     prefix: TAG_PREFIX,
     suffix: TAG_SUFFIX,
   };
