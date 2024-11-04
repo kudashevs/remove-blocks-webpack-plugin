@@ -40,7 +40,7 @@ function RemoveBlocks(content) {
 
   const options = loaderUtils.getOptions(this) || {};
 
-  if (isEmptyObject(options) || isEmptyArray(options.blocks)) {
+  if (shouldUseDefaults(options)) {
     options.blocks = defaultOptions.blocks;
   }
 
@@ -64,6 +64,10 @@ function RemoveBlocks(content) {
  */
 function shouldSkipProcessing(mode) {
   return EXCLUDE_MODES.includes(mode);
+}
+
+function shouldUseDefaults(options) {
+  return isEmptyObject(options) || isEmptyArray(options.blocks);
 }
 
 module.exports = RemoveBlocks;
