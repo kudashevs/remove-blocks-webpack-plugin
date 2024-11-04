@@ -1,27 +1,19 @@
 'use strict';
 
 /**
- * @param {Object} obj
+ * @param {Array|undefined} v
  * @returns {boolean}
  */
-function isEmptyObject(obj) {
-  return isObject(obj) && Object.keys(obj).length === 0;
+function isNotSet(v) {
+  return v === undefined || v === null;
 }
 
 /**
- * @param {Array|undefined} arr
+ * @param {Array|undefined} v
  * @returns {boolean}
  */
-function isEmptyArray(arr) {
-  return Array.isArray(arr) && arr.length === 0;
+function isEmptyArray(v) {
+  return Array.isArray(v) && v.length === 0;
 }
 
-/**
- * @param {Object} obj
- * @returns {boolean}
- */
-function isObject(obj) {
-  return typeof obj === 'object' && !Array.isArray(obj) && obj !== null;
-}
-
-module.exports = {isEmptyObject, isEmptyArray};
+module.exports = {isNotSet, isEmptyArray};

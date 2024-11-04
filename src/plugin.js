@@ -2,7 +2,7 @@
 
 const loaderUtils = require('loader-utils');
 const RemoveBlocks = require('remove-blocks');
-const {isEmptyObject, isEmptyArray} = require('./utils');
+const {isNotSet, isEmptyArray} = require('./utils');
 
 const EXCLUDE_MODES = ['development'];
 const DEFAULT_NAME = 'devblock';
@@ -53,7 +53,7 @@ function shouldSkipProcessing(mode) {
  * @returns {boolean}
  */
 function shouldUseDefaults(options) {
-  return isEmptyObject(options) || isEmptyArray(options.blocks);
+  return isNotSet(options.blocks) || isEmptyArray(options.blocks);
 }
 
 /**
