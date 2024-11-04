@@ -10,19 +10,6 @@ const TAG_PREFIX = '/*';
 const TAG_SUFFIX = '*/';
 
 /**
- * @param {string} label
- *
- * @return {Object}
- */
-function generateDefaultBlock(label) {
-  return {
-    name: `${label}`,
-    prefix: TAG_PREFIX,
-    suffix: TAG_SUFFIX,
-  };
-}
-
-/**
  * @param {string} content
  *
  * @return {string}
@@ -64,6 +51,19 @@ function shouldSkipProcessing(mode) {
 
 function shouldUseDefaults(options) {
   return isEmptyObject(options) || isEmptyArray(options.blocks);
+}
+
+/**
+ * @param {string} label
+ *
+ * @return {Object}
+ */
+function generateDefaultBlock(label) {
+  return {
+    name: `${label}`,
+    prefix: TAG_PREFIX,
+    suffix: TAG_SUFFIX,
+  };
 }
 
 module.exports = RemoveBlocks;
