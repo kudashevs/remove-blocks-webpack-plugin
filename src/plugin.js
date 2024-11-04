@@ -1,7 +1,7 @@
 'use strict';
 
 const loaderUtils = require('loader-utils');
-const removeBlocks = require('remove-blocks');
+const RemoveBlocks = require('remove-blocks');
 const {isEmptyObject, isEmptyArray} = require('./utils');
 
 const EXCLUDE_MODES = ['development'];
@@ -28,7 +28,7 @@ function WebpackRemoveBlocks(content) {
   }
 
   try {
-    content = removeBlocks(content, options);
+    content = RemoveBlocks(content, options);
   } catch (e) {
     throw e;
   }
