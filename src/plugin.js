@@ -9,10 +9,6 @@ const DEFAULT_NAME = 'devblock';
 const TAG_PREFIX = '/*';
 const TAG_SUFFIX = '*/';
 
-const defaultOptions = {
-  blocks: [generateDefaultBlock(DEFAULT_NAME)],
-};
-
 /**
  * @param {string} label
  *
@@ -41,7 +37,7 @@ function RemoveBlocks(content) {
   const options = loaderUtils.getOptions(this) || {};
 
   if (shouldUseDefaults(options)) {
-    options.blocks = defaultOptions.blocks;
+    options.blocks = [generateDefaultBlock(DEFAULT_NAME)];
   }
 
   try {
