@@ -16,7 +16,7 @@ const TAG_SUFFIX = '*/';
  *
  * @throws Error
  */
-function RemoveBlocks(content) {
+function WebpackRemoveBlocks(content) {
   if (shouldSkipProcessing(this.mode || process.env.NODE_ENV)) {
     return content;
   }
@@ -66,4 +66,4 @@ function generateDefaultBlock(name = DEFAULT_NAME) {
   };
 }
 
-module.exports = RemoveBlocks;
+module.exports = WebpackRemoveBlocks;
