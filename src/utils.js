@@ -9,7 +9,7 @@ function isEmptyObject(obj) {
 }
 
 /**
- * @param {Array} arr
+ * @param {Array|undefined} arr
  * @returns {boolean}
  */
 function isEmptyArray(arr) {
