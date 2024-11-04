@@ -24,7 +24,7 @@ function RemoveBlocks(content) {
   const options = loaderUtils.getOptions(this) || {};
 
   if (shouldUseDefaults(options)) {
-    options.blocks = [generateDefaultBlock(DEFAULT_NAME)];
+    options.blocks = [generateDefaultBlock()];
   }
 
   try {
@@ -58,7 +58,7 @@ function shouldUseDefaults(options) {
  *
  * @return {Object}
  */
-function generateDefaultBlock(label) {
+function generateDefaultBlock(label = DEFAULT_NAME) {
   return {
     name: `${label}`,
     prefix: TAG_PREFIX,
