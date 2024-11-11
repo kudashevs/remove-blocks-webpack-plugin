@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * @param {Array|undefined} v
+ * @param {Array<*>|undefined} v
  * @returns {boolean}
  */
 function isNotSet(v) {
@@ -10,7 +10,7 @@ function isNotSet(v) {
 }
 
 /**
- * @param {Array|undefined} v
+ * @param {Array<*>|undefined} v
  * @returns {boolean}
  */
 function isEmptyArray(v) {

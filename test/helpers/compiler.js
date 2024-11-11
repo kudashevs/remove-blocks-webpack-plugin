@@ -1,32 +1,45 @@
 const webpack = require('webpack');
 const path = require('path');
 const {createFsFromVolume, Volume} = require('memfs');
+const RemoveBlocksWebpackPlugin = require('../../src/plugin');
 
-function compileAsync(fixture, options = {}) {
+function createCompiler(fixture, pluginOptions = {}, webpackOptions = {}) {
   const compiler = webpack({
-    context: path.resolve(__dirname, '..'),
-    entry: path.resolve(__dirname, `../fixtures/${fixture}`),
+    cache: false,
+    entry: fixture,
+    optimization: {
+      minimize: false,
+    },
     output: {
-      path: path.resolve(__dirname),
-      filename: 'bundle.js',
+      pathinfo: false,
+      filename: '[name].js',
     },
     module: {
       rules: [
         {
-          test: /\.js$/,
-          use: {
-            loader: path.resolve(__dirname, '../../src/index.js'),
-            ...options,
-          },
+          test: /\.tmp$/i,
+          use: 'raw-loader',
         },
       ],
     },
+    plugins: [new RemoveBlocksWebpackPlugin(pluginOptions)],
+    ...webpackOptions,
   });
 
   compiler.outputFileSystem = createFsFromVolume(new Volume());
   compiler.outputFileSystem.join = path.join.bind(path);
 
-  return new Promise((resolve, reject) => {
+  return compiler;
+}
+
+function createCompilerWithEnv(environment, fixture = '', pluginOptions = {}, webpackOptions = {}) {
+  process.env.NODE_ENV = environment;
+
+  return createCompiler(fixture, pluginOptions, webpackOptions);
+}
+
+async function compile(compiler) {
+  const compileStats = await new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
         return reject(err);
@@ -36,9 +49,34 @@ function compileAsync(fixture, options = {}) {
         return reject(new Error(stats.toJson().errors));
       }
 
-      return resolve(stats);
+      resolve(stats);
     });
   });
+
+  return getCompiled(compiler, compileStats);
 }
 
-module.exports = compileAsync;
+function getCompiled(compiler, stats) {
+  const asset = stats.toJson({source: true}).assets[0].name;
+  const usedFs = compiler.outputFileSystem;
+  const outputPath = stats.compilation.outputOptions.path;
+
+  let data = '';
+  let targetFile = asset;
+
+  const queryStringIdx = targetFile.indexOf('?');
+
+  if (queryStringIdx >= 0) {
+    targetFile = targetFile.slice(0, queryStringIdx);
+  }
+
+  try {
+    data = usedFs.readFileSync(path.join(outputPath, targetFile)).toString();
+  } catch (error) {
+    data = error.toString();
+  }
+
+  return data;
+}
+
+module.exports = {createCompiler, createCompilerWithEnv, compile};

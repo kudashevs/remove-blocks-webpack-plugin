@@ -1,72 +1,101 @@
 // @ts-check
 'use strict';
 
-const loaderUtils = require('loader-utils');
 const RemoveBlocks = require('remove-blocks');
-const {isNotSet, isEmptyArray} = require('./utils');
+const {RawSource} = require('webpack-sources');
+const {isEmptyArray, isNotSet} = require('./utils');
 
 const EXCLUDE_MODES = ['development'];
 const DEFAULT_NAME = 'devblock';
 const TAG_PREFIX = '/*';
 const TAG_SUFFIX = '*/';
 
-/**
- * @param {string} content
- * @return {string}
- *
- * @throws Error
- */
-function WebpackRemoveBlocks(content) {
-  if (shouldSkipProcessing(this.mode || process.env.NODE_ENV)) {
-    return content;
+class RemoveBlocksWebpackPlugin {
+  constructor(options = {}) {
+    this.options = options;
   }
 
-  const options = loaderUtils.getOptions(this) || {};
+  apply(compiler) {
+    const pluginName = 'RemoveBlocksWebpackPlugin';
+    const isWebpack5 = compiler.webpack && compiler.webpack.version >= '5';
 
-  if (shouldUseDefaults(options)) {
-    options.blocks = [generateDefaultBlock()];
+    compiler.hooks.thisCompilation.tap(pluginName, compilation => {
+      if (this.shouldSkipProcessing(compiler.options.mode || process.env.NODE_ENV)) {
+        return;
+      }
+
+      if (isWebpack5) {
+        const {webpack} = compiler;
+        const {Compilation} = webpack;
+        const {RawSource} = webpack.sources;
+
+        // prettier-ignore
+        compilation.hooks.processAssets.tap({
+          name: pluginName,
+          stage: Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE,
+        }, assets => {
+          try {
+            this.processAssets(compilation, assets, RawSource);
+          } catch (err) {
+            throw new Error(`Compilation failed with ${err.message}`);
+          }
+        });
+      } else {
+        compilation.hooks.afterOptimizeAssets.tap(pluginName, assets => {
+          try {
+            this.processAssets(compilation, assets, RawSource);
+          } catch (err) {
+            compilation.errors.push(`Compilation failed with ${err.message}`);
+          }
+        });
+      }
+    });
   }
 
-  try {
-    content = RemoveBlocks(content, options);
-  } catch (e) {
-    throw e;
+  processAssets(compilation, assets, RawSource) {
+    compilation.getAssets().forEach(({name, source}) => {
+      const modified = this.remove(source.source(), this.options);
+
+      compilation.updateAsset(name, new RawSource(modified));
+    });
   }
 
-  if (this.cacheable) {
-    this.cacheable(true);
+  /**
+   * @param {string} mode
+   * @return {boolean}
+   */
+  shouldSkipProcessing(mode) {
+    return EXCLUDE_MODES.includes(mode);
   }
 
-  return content;
+  remove(content, options) {
+    if (this.shouldUseDefaults(options)) {
+      options.blocks = [this.generateDefaultBlock()];
+    }
+
+    return RemoveBlocks(content, options);
+  }
+
+  /**
+   * @param {Object} options
+   * @param {Array<string|Object>|undefined} [options.blocks]
+   * @returns {boolean}
+   */
+  shouldUseDefaults(options) {
+    return isNotSet(options.blocks) || isEmptyArray(options.blocks);
+  }
+
+  /**
+   * @param {string} [name=DEFAULT_NAME]
+   * @return {{name:string, prefix: string, suffix: string}}
+   */
+  generateDefaultBlock(name = DEFAULT_NAME) {
+    return {
+      name: `${name}`,
+      prefix: TAG_PREFIX,
+      suffix: TAG_SUFFIX,
+    };
+  }
 }
 
-/**
- * @param {string} mode
- * @return {boolean}
- */
-function shouldSkipProcessing(mode) {
-  return EXCLUDE_MODES.includes(mode);
-}
-
-/**
- * @param {Object} options
- * @param {Array<string|Object>|undefined} [options.blocks]
- * @returns {boolean}
- */
-function shouldUseDefaults(options) {
-  return isNotSet(options.blocks) || isEmptyArray(options.blocks);
-}
-
-/**
- * @param {string} [name=DEFAULT_NAME]
- * @return {Object}
- */
-function generateDefaultBlock(name = DEFAULT_NAME) {
-  return {
-    name: `${name}`,
-    prefix: TAG_PREFIX,
-    suffix: TAG_SUFFIX,
-  };
-}
-
-module.exports = WebpackRemoveBlocks;
+module.exports = RemoveBlocksWebpackPlugin;

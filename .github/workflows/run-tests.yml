@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         node-version: [18.x, 20.x, 21.x, 22.x]
-        webpack-version: [3, 4, 5]
+        webpack-version: [4, 5]
 
     steps:
       - name: Checkout code

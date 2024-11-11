@@ -3,4 +3,4 @@
 
 const RemoveBlocksLoader = require('./plugin');
 
-module.exports = RemoveBlocksLoader;
+module.exports = new RemoveBlocksLoader();
