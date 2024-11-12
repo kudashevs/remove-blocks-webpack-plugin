@@ -30,7 +30,7 @@ class Fixture {
   }
 
   static close() {
-    fs.closeSync(File.fd);
+    fs.closeSync(Fixture.fd);
     fs.unlinkSync(FIXTURE_PATH);
   }
 }
