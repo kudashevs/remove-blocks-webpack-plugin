@@ -41,8 +41,6 @@ function createCompilerWithEnv(environment, input = '', pluginOptions = {}, webp
 }
 
 async function compile(compiler) {
-  const isWebpack5 = compiler.webpack && compiler.webpack.version >= '5';
-
   const compileStats = await new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
@@ -53,7 +51,7 @@ async function compile(compiler) {
         return reject(new Error(stats.toJson().errors));
       }
 
-      if (isWebpack5) {
+      if (compiler.close) {
         compiler.close(() => {
           resolve(stats);
         });
