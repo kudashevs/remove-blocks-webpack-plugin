@@ -1,6 +1,6 @@
 // @ts-check
 'use strict';
 
-const RemoveBlocksLoader = require('./plugin');
+const RemoveBlocksWebpackPlugin = require('./plugin');
 
-module.exports = new RemoveBlocksLoader();
+module.exports = RemoveBlocksWebpackPlugin;
