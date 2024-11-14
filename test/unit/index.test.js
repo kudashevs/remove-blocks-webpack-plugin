@@ -1,6 +1,6 @@
 const {describe, expect, it} = require('@jest/globals');
-const {createCompiler, createCompilerWithEnv, compile} = require('../helpers/compiler');
-const FixtureKeeper = require('../helpers/keeper');
+const {createCompiler, createCompilerWithEnv, getCompiledFixture} = require('../helpers/compiler');
+const FixtureKeeper = require('../helpers/fixture-keeper');
 
 describe('default test suite', () => {
   const originalMode = process.env.NODE_ENV;
@@ -23,7 +23,7 @@ describe('default test suite', () => {
   ])('can proceed in %s environment', async (environment, input) => {
     const webpackWithEnv = createCompilerWithEnv(environment, input);
 
-    const output = await compile(webpackWithEnv);
+    const output = await getCompiledFixture(webpackWithEnv);
 
     expect(output).toEqual(expect.not.stringContaining(input));
   });
@@ -34,7 +34,7 @@ describe('default test suite', () => {
   ])('can skip in %s environment', async (environment, input) => {
     const webpackWithEnv = createCompilerWithEnv(environment, input);
 
-    const output = await compile(webpackWithEnv);
+    const output = await getCompiledFixture(webpackWithEnv);
 
     expect(output).toEqual(expect.stringContaining(input));
   });
@@ -55,7 +55,7 @@ describe('default test suite', () => {
       {mode: 'development'},
     );
 
-    const output = await compile(webpack);
+    const output = await getCompiledFixture(webpack);
 
     expect(output).toEqual(expect.stringContaining(input));
   });
@@ -64,7 +64,7 @@ describe('default test suite', () => {
     const input = '/* devblock:start */ any /* devblock:end */';
     const webpack = createCompiler(input, {}, {mode: 'none'});
 
-    const output = await compile(webpack);
+    const output = await getCompiledFixture(webpack);
 
     expect(output).toEqual(expect.not.stringContaining(input));
   });
@@ -73,7 +73,7 @@ describe('default test suite', () => {
     const input = '/* devblock:start */ any /* devblock:end */';
     const webpack = createCompiler(input, {blocks: []});
 
-    const output = await compile(webpack);
+    const output = await getCompiledFixture(webpack);
 
     expect(output).toEqual(expect.not.stringContaining(input));
   });
@@ -85,7 +85,7 @@ describe('default test suite', () => {
     const webpack = createCompiler('any', options);
 
     try {
-      await compile(webpack);
+      await getCompiledFixture(webpack);
     } catch (e) {
       expect(e.message).toMatch(expected);
     }
@@ -100,7 +100,7 @@ describe('default test suite', () => {
     const expected = 'visible ';
     const unexpected = '/* devblock:start */ "will be removed" /* devblock:end */';
 
-    const output = await compile(webpack);
+    const output = await getCompiledFixture(webpack);
 
     expect(output).toEqual(expect.stringContaining(expected));
     expect(output).toEqual(expect.not.stringContaining(unexpected));
@@ -121,7 +121,7 @@ describe('default test suite', () => {
     const expected = 'visible ';
     const unexpected = '<!-- *devblock!:start --> will be removed <!-- *devblock!:end -->';
 
-    const output = await compile(webpack);
+    const output = await getCompiledFixture(webpack);
 
     expect(output).toEqual(expect.stringContaining(expected));
     expect(output).toEqual(expect.not.stringContaining(unexpected));
@@ -134,7 +134,7 @@ describe('default test suite', () => {
     const expected = 'visible ';
     const unexpected = '/* devblock:start */ will be removed /* devblock:end */';
 
-    const output = await compile(webpack);
+    const output = await getCompiledFixture(webpack);
 
     expect(output).toEqual(expect.stringContaining(expected));
     expect(output).toEqual(expect.not.stringContaining(unexpected));
@@ -146,7 +146,7 @@ describe('default test suite', () => {
 
     const expected = `visible /* DEVBLOCK:START */ won't be removed /* DEVBLOCK:END */`;
 
-    const output = await compile(webpack);
+    const output = await getCompiledFixture(webpack);
 
     expect(output).toEqual(expect.stringContaining(expected));
   });
@@ -166,7 +166,7 @@ describe('default test suite', () => {
     const expected = 'visible ';
     const unexpected = '/* DEVBLOCK:start */ will be removed /* DEVBLOCK:end */';
 
-    const output = await compile(webpack);
+    const output = await getCompiledFixture(webpack);
 
     expect(output).toEqual(expect.stringContaining(expected));
     expect(output).toEqual(expect.not.stringContaining(unexpected));

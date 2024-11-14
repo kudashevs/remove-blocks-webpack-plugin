@@ -45,8 +45,20 @@ function createCompilerWithEnv(environment, input = '', pluginOptions = {}, webp
   return createCompiler(input, pluginOptions, webpackOptions);
 }
 
+async function getCompiledFixture(compiler) {
+  const compileStats = await compile(compiler);
+
+  return retrieveCompiledFixture(compiler, compileStats);
+}
+
+async function getCompiledOutput(compiler) {
+  const compileStats = await compile(compiler);
+
+  return retrieveCompiledOutput(compiler, compileStats);
+}
+
 async function compile(compiler) {
-  const compileStats = await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
         return reject(err);
@@ -65,14 +77,28 @@ async function compile(compiler) {
       }
     });
   });
-
-  return getCompiled(compiler, compileStats);
 }
 
-function getCompiled(compiler, stats) {
-  const asset = stats.toJson({source: true}).assets[0].name;
+function retrieveCompiledFixture(compiler, stats) {
   const usedFs = compiler.outputFileSystem;
   const outputPath = stats.compilation.outputOptions.path;
+  const targetFile = path.basename(compiler.options.entry.fixture.import[0]);
+
+  let data = '';
+
+  try {
+    data = usedFs.readFileSync(path.join(outputPath, targetFile)).toString();
+  } catch (error) {
+    data = error.toString();
+  }
+
+  return data;
+}
+
+function retrieveCompiledOutput(compiler, stats) {
+  const usedFs = compiler.outputFileSystem;
+  const outputPath = stats.compilation.outputOptions.path;
+  const asset = stats.toJson({source: true}).assets[0].name;
 
   let data = '';
   let targetFile = asset;
@@ -92,4 +118,4 @@ function getCompiled(compiler, stats) {
   return data;
 }
 
-module.exports = {createCompiler, createCompilerWithEnv, compile};
+module.exports = {createCompiler, createCompilerWithEnv, getCompiledOutput, getCompiledFixture};
