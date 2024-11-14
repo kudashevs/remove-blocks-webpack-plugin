@@ -20,7 +20,12 @@ function createCompiler(input, pluginOptions = {}, webpackOptions = {}) {
       rules: [
         {
           test: /\.tmp$/i,
-          use: 'raw-loader',
+          use: [
+            {
+              loader: path.resolve(__dirname, './raw-emitter.js'),
+              options: {},
+            },
+          ],
         },
       ],
     },
