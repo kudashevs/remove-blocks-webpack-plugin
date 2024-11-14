@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-const Fixture = require('../helpers/keeper');
+const Fixture = require('../helpers/fixture-keeper');
 const {createFsFromVolume, Volume} = require('memfs');
 const RemoveBlocksWebpackPlugin = require('../../src/plugin');
 
