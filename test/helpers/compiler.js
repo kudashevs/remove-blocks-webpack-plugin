@@ -4,11 +4,14 @@ const Fixture = require('../helpers/fixture-keeper');
 const {createFsFromVolume, Volume} = require('memfs');
 const RemoveBlocksWebpackPlugin = require('../../src/plugin');
 
-function createCompiler(input, pluginOptions = {}, webpackOptions = {}) {
+async function compileAll(input, pluginOptions = {}, webpackOptions = {}) {
   Fixture.write(input);
+
   const compiler = webpack({
     cache: false,
-    entry: Fixture.path(),
+    entry: {
+      fixture: Fixture.path(),
+    },
     optimization: {
       minimize: false,
     },
@@ -36,13 +39,22 @@ function createCompiler(input, pluginOptions = {}, webpackOptions = {}) {
   compiler.outputFileSystem = createFsFromVolume(new Volume());
   compiler.outputFileSystem.join = path.join.bind(path);
 
-  return compiler;
+  const compileStats = await compile(compiler);
+
+  return {
+    getCompiledOutput() {
+      return retrieveCompiledOutput(compiler, compileStats);
+    },
+    getCompiledFixture() {
+      return retrieveCompiledFixture(compiler, compileStats);
+    },
+  };
 }
 
-function createCompilerWithEnv(environment, input = '', pluginOptions = {}, webpackOptions = {}) {
+function compileAllWithEnv(environment, input = '', pluginOptions = {}, webpackOptions = {}) {
   process.env.NODE_ENV = environment;
 
-  return createCompiler(input, pluginOptions, webpackOptions);
+  return compileAll(input, pluginOptions, webpackOptions);
 }
 
 async function getCompiledFixture(compiler) {
@@ -118,4 +130,4 @@ function retrieveCompiledOutput(compiler, stats) {
   return data;
 }
 
-module.exports = {createCompiler, createCompilerWithEnv, getCompiledOutput, getCompiledFixture};
+module.exports = {compileAll, compileAllWithEnv, getCompiledOutput, getCompiledFixture};
