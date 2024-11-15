@@ -101,16 +101,16 @@ function retrieveCompiledFixture(compiler, stats) {
   return retrieveCompiled(compiler, stats, retrieveFirstEntry(compiler));
 }
 
-function retrieveCompiledOutput(compiler, stats) {
-  return retrieveCompiled(compiler, stats, retrieveFirstAsset(stats));
-}
-
 function retrieveFirstEntry(compiler) {
   const entity = compiler.options.entry.fixture?.import
     ? compiler.options.entry.fixture?.import[0]
     : compiler.options.entry.fixture;
 
   return path.basename(entity);
+}
+
+function retrieveCompiledOutput(compiler, stats) {
+  return retrieveCompiled(compiler, stats, retrieveFirstAsset(stats));
 }
 
 function retrieveFirstAsset(stats) {
