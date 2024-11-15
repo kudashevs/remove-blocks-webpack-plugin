@@ -82,42 +82,35 @@ async function compile(input, compiler) {
   });
 }
 
-function retrieveCompiledFixture(compiler, stats) {
+function retrieveCompiled(compiler, stats, entity) {
   const usedFs = compiler.outputFileSystem;
   const outputPath = stats.compilation.outputOptions.path;
-  const targetFile = path.basename(retrieveFirstEntry(compiler));
 
   let data = '';
 
   try {
-    data = usedFs.readFileSync(path.join(outputPath, targetFile)).toString();
+    data = usedFs.readFileSync(path.join(outputPath, entity)).toString();
   } catch (error) {
     data = error.toString();
   }
 
   return data;
+}
+
+function retrieveCompiledFixture(compiler, stats) {
+  return retrieveCompiled(compiler, stats, retrieveFirstEntry(compiler));
 }
 
 function retrieveCompiledOutput(compiler, stats) {
-  const usedFs = compiler.outputFileSystem;
-  const outputPath = stats.compilation.outputOptions.path;
-  const asset = retrieveFirstAsset(stats);
-
-  let data = '';
-
-  try {
-    data = usedFs.readFileSync(path.join(outputPath, asset)).toString();
-  } catch (error) {
-    data = error.toString();
-  }
-
-  return data;
+  return retrieveCompiled(compiler, stats, retrieveFirstAsset(stats));
 }
 
 function retrieveFirstEntry(compiler) {
-  return compiler.options.entry.fixture?.import
+  const entity = compiler.options.entry.fixture?.import
     ? compiler.options.entry.fixture?.import[0]
     : compiler.options.entry.fixture;
+
+  return path.basename(entity);
 }
 
 function retrieveFirstAsset(stats) {
