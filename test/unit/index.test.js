@@ -1,12 +1,12 @@
 const {describe, expect, it} = require('@jest/globals');
 const {createWebpack, createWebpackWithEnv} = require('../helpers/compiler');
-const FixtureKeeper = require('../helpers/fixture-keeper');
+const EntryKeeper = require('../helpers/entry-keeper');
 
 describe('default test suite', () => {
   const originalMode = process.env.NODE_ENV;
 
   beforeAll(() => {
-    FixtureKeeper.open();
+    EntryKeeper.open();
   });
 
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('default test suite', () => {
   });
 
   afterAll(() => {
-    FixtureKeeper.close();
+    EntryKeeper.close();
   });
 
   it.each([

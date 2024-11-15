@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-const Fixture = require('../helpers/fixture-keeper');
+const EntryFixture = require('../helpers/entry-keeper');
 const {createFsFromVolume, Volume} = require('memfs');
 const RemoveBlocksWebpackPlugin = require('../../src/plugin');
 
@@ -8,7 +8,7 @@ function createWebpack(pluginOptions = {}, webpackOptions = {}) {
   const compiler = webpack({
     cache: false,
     entry: {
-      fixture: Fixture.path(),
+      fixture: EntryFixture.path(),
     },
     optimization: {
       minimize: false,
@@ -59,7 +59,7 @@ function createWebpackWithEnv(environment, pluginOptions = {}, webpackOptions = 
 }
 
 async function compile(input, compiler) {
-  Fixture.write(input);
+  EntryFixture.write(input);
 
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
