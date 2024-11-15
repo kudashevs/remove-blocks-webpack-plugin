@@ -50,6 +50,7 @@ describe('README example test suite', () => {
             ],
           }),
         ],
+        module: {},
       },
     );
 
