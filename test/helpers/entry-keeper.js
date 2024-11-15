@@ -1,39 +1,50 @@
 const fs = require('fs');
 const path = require('path');
 
-const ENTRY_PATH = path.resolve(__dirname, '../temp/entry.tmp');
+const ENTRY_PATH = '../temp/';
+const ENTRY_FILE = 'entry.tmp';
 
 class Entry {
-  static open() {
-    fs.openSync(ENTRY_PATH, 'w');
+  static file;
+
+  static open(file = ENTRY_FILE) {
+    file = path.join(__dirname, ENTRY_PATH, file);
+
+    try {
+      fs.openSync(file, 'w');
+    } catch (err) {
+      throw new Error(`Cannot create a file ${file} because ${err.message}`);
+    }
+
+    Entry.file = file;
   }
 
   static write(data) {
     try {
-      fs.writeFileSync(ENTRY_PATH, data, {encoding: 'utf-8', flag: 'w'});
+      fs.writeFileSync(Entry.file, data, {encoding: 'utf-8', flag: 'w'});
     } catch (err) {
-      throw new Error(`Cannot write to file ${ENTRY_PATH} because ${err.message}`);
+      throw new Error(`Cannot write to file ${Entry.file} because ${err.message}`);
     }
   }
 
   static read() {
     try {
-      return fs.readFileSync(ENTRY_PATH, {encoding: 'utf-8'});
+      return fs.readFileSync(Entry.file, {encoding: 'utf-8'});
     } catch (err) {
-      throw new Error(`Cannot read file ${ENTRY_PATH} because ${err.message}`);
+      throw new Error(`Cannot read file ${Entry.file} because ${err.message}`);
     }
   }
 
   static path() {
-    return ENTRY_PATH;
+    return Entry.file;
   }
 
   static exists() {
-    return fs.existsSync(ENTRY_PATH);
+    return fs.existsSync(Entry.file);
   }
 
   static close() {
-    fs.unlinkSync(ENTRY_PATH);
+    fs.unlinkSync(Entry.file);
   }
 }
 

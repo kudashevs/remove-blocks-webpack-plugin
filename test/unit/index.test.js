@@ -6,7 +6,7 @@ describe('default test suite', () => {
   const originalMode = process.env.NODE_ENV;
 
   beforeAll(() => {
-    EntryKeeper.open();
+    EntryKeeper.open('default.tmp');
   });
 
   beforeEach(() => {
