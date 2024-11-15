@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ENTRY_PATH = '../temp/';
-const ENTRY_FILE = 'entry.tmp';
+const ENTRY_FILE = 'fixture.tmp';
 
 class Entry {
   static file;
