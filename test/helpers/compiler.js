@@ -4,9 +4,7 @@ const Fixture = require('../helpers/fixture-keeper');
 const {createFsFromVolume, Volume} = require('memfs');
 const RemoveBlocksWebpackPlugin = require('../../src/plugin');
 
-async function compileAll(input, pluginOptions = {}, webpackOptions = {}) {
-  Fixture.write(input);
-
+function createWebpack(pluginOptions = {}, webpackOptions = {}) {
   const compiler = webpack({
     cache: false,
     entry: {
@@ -39,38 +37,31 @@ async function compileAll(input, pluginOptions = {}, webpackOptions = {}) {
   compiler.outputFileSystem = createFsFromVolume(new Volume());
   compiler.outputFileSystem.join = path.join.bind(path);
 
-  const compileStats = await compile(compiler);
-
   return {
-    getCompiledOutput() {
-      return retrieveCompiledOutput(compiler, compileStats);
-    },
-    getCompiledFixture() {
-      return retrieveCompiledFixture(compiler, compileStats);
+    async compile(input) {
+      const compileStats = await compile(input, compiler);
+      return {
+        getCompiledOutput() {
+          return retrieveCompiledOutput(compiler, compileStats);
+        },
+        getCompiledFixture() {
+          return retrieveCompiledFixture(compiler, compileStats);
+        },
+      };
     },
   };
 }
 
-function compileAllWithEnv(environment, input = '', pluginOptions = {}, webpackOptions = {}) {
+function createWebpackWithEnv(environment, pluginOptions = {}, webpackOptions = {}) {
   process.env.NODE_ENV = environment;
 
-  return compileAll(input, pluginOptions, webpackOptions);
+  return createWebpack(pluginOptions, webpackOptions);
 }
 
-async function getCompiledFixture(compiler) {
-  const compileStats = await compile(compiler);
+async function compile(input, compiler) {
+  Fixture.write(input);
 
-  return retrieveCompiledFixture(compiler, compileStats);
-}
-
-async function getCompiledOutput(compiler) {
-  const compileStats = await compile(compiler);
-
-  return retrieveCompiledOutput(compiler, compileStats);
-}
-
-async function compile(compiler) {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
         return reject(err);
@@ -113,16 +104,9 @@ function retrieveCompiledOutput(compiler, stats) {
   const asset = stats.toJson({source: true}).assets[0].name;
 
   let data = '';
-  let targetFile = asset;
-
-  const queryStringIdx = targetFile.indexOf('?');
-
-  if (queryStringIdx >= 0) {
-    targetFile = targetFile.slice(0, queryStringIdx);
-  }
 
   try {
-    data = usedFs.readFileSync(path.join(outputPath, targetFile)).toString();
+    data = usedFs.readFileSync(path.join(outputPath, asset)).toString();
   } catch (error) {
     data = error.toString();
   }
@@ -130,4 +114,4 @@ function retrieveCompiledOutput(compiler, stats) {
   return data;
 }
 
-module.exports = {compileAll, compileAllWithEnv, getCompiledOutput, getCompiledFixture};
+module.exports = {createWebpack, createWebpackWithEnv};
