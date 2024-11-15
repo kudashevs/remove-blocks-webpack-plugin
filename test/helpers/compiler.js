@@ -103,7 +103,7 @@ function retrieveCompiledFixture(compiler, stats) {
 
 function retrieveFirstEntry(compiler) {
   const entity = compiler.options.entry.fixture?.import
-    ? compiler.options.entry.fixture?.import[0]
+    ? compiler.options.entry.fixture.import[0]
     : compiler.options.entry.fixture;
 
   return path.basename(entity);
