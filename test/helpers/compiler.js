@@ -82,16 +82,16 @@ async function compile(input, compiler) {
   });
 }
 
-function retrieveCompiled(compiler, stats, entity) {
+function retrieveCompiled(compiler, stats, filename) {
   const usedFs = compiler.outputFileSystem;
   const outputPath = stats.compilation.outputOptions.path;
 
   let data = '';
 
   try {
-    data = usedFs.readFileSync(path.join(outputPath, entity)).toString();
-  } catch (error) {
-    data = error.toString();
+    data = usedFs.readFileSync(path.join(outputPath, filename)).toString();
+  } catch (err) {
+    data = err.toString();
   }
 
   return data;
