@@ -28,6 +28,10 @@ class Fixture {
     return FIXTURE_PATH;
   }
 
+  static exists() {
+    return fs.existsSync(FIXTURE_PATH);
+  }
+
   static close() {
     fs.unlinkSync(FIXTURE_PATH);
   }
