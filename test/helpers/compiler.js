@@ -85,7 +85,7 @@ async function compile(input, compiler) {
 function retrieveCompiledFixture(compiler, stats) {
   const usedFs = compiler.outputFileSystem;
   const outputPath = stats.compilation.outputOptions.path;
-  const targetFile = path.basename(compiler.options.entry.fixture.import[0]);
+  const targetFile = path.basename(retrieveFirstEntry(compiler));
 
   let data = '';
 
@@ -112,6 +112,12 @@ function retrieveCompiledOutput(compiler, stats) {
   }
 
   return data;
+}
+
+function retrieveFirstEntry(compiler) {
+  return compiler.options.entry.fixture?.import
+    ? compiler.options.entry.fixture?.import[0]
+    : compiler.options.entry.fixture;
 }
 
 module.exports = {createWebpack, createWebpackWithEnv};
