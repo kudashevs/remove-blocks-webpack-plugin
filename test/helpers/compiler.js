@@ -101,7 +101,7 @@ function retrieveCompiledFixture(compiler, stats) {
 function retrieveCompiledOutput(compiler, stats) {
   const usedFs = compiler.outputFileSystem;
   const outputPath = stats.compilation.outputOptions.path;
-  const asset = stats.toJson({source: true}).assets[0].name;
+  const asset = retrieveFirstAsset(stats);
 
   let data = '';
 
@@ -118,6 +118,10 @@ function retrieveFirstEntry(compiler) {
   return compiler.options.entry.fixture?.import
     ? compiler.options.entry.fixture?.import[0]
     : compiler.options.entry.fixture;
+}
+
+function retrieveFirstAsset(stats) {
+  return stats.toJson({source: true}).assets[0].name;
 }
 
 module.exports = {createWebpack, createWebpackWithEnv};
