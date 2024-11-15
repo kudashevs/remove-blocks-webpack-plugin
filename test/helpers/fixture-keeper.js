@@ -3,7 +3,7 @@ const path = require('path');
 
 const FIXTURE_PATH = path.resolve(__dirname, '../temp/test-storage.tmp');
 
-class Fixture {
+class Entry {
   static open() {
     fs.openSync(FIXTURE_PATH, 'w');
   }
@@ -37,4 +37,4 @@ class Fixture {
   }
 }
 
-module.exports = Fixture;
+module.exports = Entry;
