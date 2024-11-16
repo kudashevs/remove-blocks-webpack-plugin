@@ -5,9 +5,11 @@ const ENTRY_PATH = '../temp/';
 const ENTRY_FILE = 'fixture.tmp';
 
 class Entry {
-  static file;
+  file;
 
-  static open(file = ENTRY_FILE) {
+  constructor() {}
+
+  open(file = ENTRY_FILE) {
     file = path.join(__dirname, ENTRY_PATH, file);
 
     try {
@@ -19,7 +21,7 @@ class Entry {
     Entry.file = file;
   }
 
-  static write(data) {
+  write(data) {
     try {
       fs.writeFileSync(Entry.file, data, {encoding: 'utf-8', flag: 'w'});
     } catch (err) {
@@ -27,7 +29,7 @@ class Entry {
     }
   }
 
-  static read() {
+  read() {
     try {
       return fs.readFileSync(Entry.file, {encoding: 'utf-8'});
     } catch (err) {
@@ -35,15 +37,15 @@ class Entry {
     }
   }
 
-  static path() {
+  path() {
     return Entry.file;
   }
 
-  static exists() {
+  exists() {
     return fs.existsSync(Entry.file);
   }
 
-  static close() {
+  close() {
     fs.unlinkSync(Entry.file);
   }
 }
