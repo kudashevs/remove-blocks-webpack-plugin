@@ -1,5 +1,9 @@
 const path = require('path');
 
+/**
+ * This loader creates a raw copy of a processed file.
+ * The raw copy will be transformed without compilation.
+ */
 function RawEmitLoader(source) {
   const filename = path.basename(this.resourcePath);
   const assetInfo = {sourceFilename: filename};
