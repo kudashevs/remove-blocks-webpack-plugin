@@ -1,14 +1,13 @@
 const webpack = require('webpack');
 const path = require('path');
-const EntryFixture = require('../helpers/entry-keeper');
 const {createFsFromVolume, Volume} = require('memfs');
 const RemoveBlocksWebpackPlugin = require('../../src/plugin');
 
-function createWebpack(pluginOptions = {}, webpackOptions = {}) {
+function createWebpack(file, pluginOptions = {}, webpackOptions = {}) {
   const compiler = webpack({
     cache: false,
     entry: {
-      fixture: EntryFixture.path(),
+      fixture: (file.path && file.path()) || path.resolve(__dirname, `../fixtures/${file}`),
     },
     optimization: {
       minimize: false,
@@ -20,7 +19,7 @@ function createWebpack(pluginOptions = {}, webpackOptions = {}) {
     module: {
       rules: [
         {
-          test: /\.tmp$/i,
+          test: /\.tmp$/i, // the raw-emitter will be applied to tmp file only
           use: [
             {
               loader: path.resolve(__dirname, './raw-emitter.js'),
@@ -39,6 +38,7 @@ function createWebpack(pluginOptions = {}, webpackOptions = {}) {
 
   return {
     async compile(input) {
+      file.write && file.write(input);
       const compileStats = await compile(input, compiler);
       return {
         getCompiledOutput() {
@@ -52,15 +52,13 @@ function createWebpack(pluginOptions = {}, webpackOptions = {}) {
   };
 }
 
-function createWebpackWithEnv(environment, pluginOptions = {}, webpackOptions = {}) {
+function createWebpackWithEnv(file, environment, pluginOptions = {}, webpackOptions = {}) {
   process.env.NODE_ENV = environment;
 
-  return createWebpack(pluginOptions, webpackOptions);
+  return createWebpack(file, pluginOptions, webpackOptions);
 }
 
 async function compile(input, compiler) {
-  EntryFixture.write(input);
-
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
