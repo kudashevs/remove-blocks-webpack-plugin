@@ -7,6 +7,10 @@ const ENTRY_FILE = 'fixture.tmp';
 class Entry {
   file;
 
+  /**
+   * The constructor does not create any files because of the symmetry principle.
+   * The open operation should be explicit and symmetrical to the close operation.
+   */
   constructor() {}
 
   open(file = ENTRY_FILE) {
