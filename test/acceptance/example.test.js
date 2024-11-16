@@ -1,7 +1,7 @@
 const {describe, expect, it} = require('@jest/globals');
 const converter = require('../helpers/converter.js');
 const {createWebpack} = require('../helpers/compiler');
-const FixtureKeeper = require('../helpers/entry-keeper');
+const EntryKeeper = require('../helpers/entry-keeper');
 const RemoveBlocksWebpackPlugin = require('../../src');
 
 describe('README example test suite', () => {
@@ -27,11 +27,11 @@ describe('README example test suite', () => {
 }`;
 
   beforeAll(() => {
-    FixtureKeeper.open('example.tmp');
+    EntryKeeper.open('example.tmp');
   });
 
   afterAll(() => {
-    FixtureKeeper.close();
+    EntryKeeper.close();
   });
 
   it('can process the example from README.md', async () => {
