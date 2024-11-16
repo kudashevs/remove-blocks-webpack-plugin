@@ -4,9 +4,10 @@ const EntryKeeper = require('../helpers/entry-keeper');
 
 describe('default test suite', () => {
   const originalMode = process.env.NODE_ENV;
+  const keeper = new EntryKeeper();
 
   beforeAll(() => {
-    EntryKeeper.open('default.tmp');
+    keeper.open('default.tmp');
   });
 
   beforeEach(() => {
@@ -14,14 +15,14 @@ describe('default test suite', () => {
   });
 
   afterAll(() => {
-    EntryKeeper.close();
+    keeper.close();
   });
 
   it.each([
     ['production', '/* devblock:start */ any /* devblock:end */', ''],
     ['test', '/* devblock:start */ any /* devblock:end */', ''],
   ])('can proceed in %s environment', async (environment, input, expected) => {
-    const webpack = createWebpackWithEnv(environment);
+    const webpack = createWebpackWithEnv(keeper, environment);
 
     const output = (await webpack.compile(input)).getCompiledFixture();
 
@@ -32,7 +33,7 @@ describe('default test suite', () => {
   it.each([
     ['development', '/* devblock:start */ any /* devblock:end */', '/* devblock:start */ any /* devblock:end */'],
   ])('can skip in %s environment', async (environment, input, expected) => {
-    const webpack = createWebpackWithEnv(environment);
+    const webpack = createWebpackWithEnv(keeper, environment);
 
     const output = (await webpack.compile(input)).getCompiledFixture();
 
@@ -41,6 +42,7 @@ describe('default test suite', () => {
 
   it('can skip development environment set with a webpack option', async () => {
     const webpack = createWebpack(
+      keeper,
       {
         blocks: [
           {
@@ -62,7 +64,7 @@ describe('default test suite', () => {
   });
 
   it('can handle a none mode option', async () => {
-    const webpack = createWebpack({}, {mode: 'none'});
+    const webpack = createWebpack(keeper, {}, {mode: 'none'});
 
     const input = '/* devblock:start */ any /* devblock:end */';
     const expected = '';
@@ -73,7 +75,7 @@ describe('default test suite', () => {
   });
 
   it('can handle an empty blocks options', async () => {
-    const webpack = createWebpack({blocks: []});
+    const webpack = createWebpack(keeper, {blocks: []});
 
     const input = '/* devblock:start */ any /* devblock:end */';
     const expected = '';
@@ -87,7 +89,7 @@ describe('default test suite', () => {
     ['is of a wrong type', {blocks: 'wrong'}, 'blocks option must be an array'],
     ['has a wrong value', {blocks: [42]}, 'blocks.0 should be a string or a valid object'],
   ])('can validate blocks option when it %s', async (_, options, expected) => {
-    const webpack = createWebpack(options);
+    const webpack = createWebpack(keeper, options);
 
     try {
       await webpack.compile('any');
@@ -99,7 +101,7 @@ describe('default test suite', () => {
   });
 
   it('can remove a code block marked with the colon (default block representation)', async () => {
-    const webpack = createWebpack();
+    const webpack = createWebpack(keeper);
 
     const input = 'visible /* devblock:start */ will be removed /* devblock:end */';
     const expected = 'visible ';
@@ -110,7 +112,7 @@ describe('default test suite', () => {
   });
 
   it('can use special characters in names', async () => {
-    const webpack = createWebpack({
+    const webpack = createWebpack(keeper, {
       blocks: [
         {
           name: '*devblock!',
@@ -129,7 +131,7 @@ describe('default test suite', () => {
   });
 
   it('can remove a code block marked in lower case', async () => {
-    const webpack = createWebpack();
+    const webpack = createWebpack(keeper);
 
     const input = 'visible /* devblock:start */ will be removed /* devblock:end */';
     const expected = 'visible ';
@@ -140,7 +142,7 @@ describe('default test suite', () => {
   });
 
   it('cannot remove a code block marked in upper case with default options', async () => {
-    const webpack = createWebpack();
+    const webpack = createWebpack(keeper);
 
     const input = "visible /* DEVBLOCK:START */ won't be removed /* DEVBLOCK:END */";
     const expected = `visible /* DEVBLOCK:START */ won't be removed /* DEVBLOCK:END */`;
@@ -151,7 +153,7 @@ describe('default test suite', () => {
   });
 
   it('can remove a code block marked in upper case with the specific options', async () => {
-    const webpack = createWebpack({
+    const webpack = createWebpack(keeper, {
       blocks: [
         {
           name: 'DEVBLOCK',

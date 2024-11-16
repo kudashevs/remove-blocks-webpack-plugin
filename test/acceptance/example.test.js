@@ -5,6 +5,7 @@ const EntryKeeper = require('../helpers/entry-keeper');
 const RemoveBlocksWebpackPlugin = require('../../src');
 
 describe('README example test suite', () => {
+  const keeper = new EntryKeeper();
   const input = `function makeFoo(bar, baz) {
     /* debug:start */ console.log('creating Foo'); /* debug:end */
     // development:start
@@ -27,15 +28,16 @@ describe('README example test suite', () => {
 }`;
 
   beforeAll(() => {
-    EntryKeeper.open('example.tmp');
+    keeper.open('example.js');
   });
 
   afterAll(() => {
-    EntryKeeper.close();
+    keeper.close();
   });
 
   it('can process the example from README.md', async () => {
     const webpack = createWebpack(
+      keeper,
       {},
       {
         plugins: [
@@ -50,7 +52,6 @@ describe('README example test suite', () => {
             ],
           }),
         ],
-        module: {},
       },
     );
 
