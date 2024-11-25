@@ -19,7 +19,7 @@ function createWebpack(file, pluginOptions = {}, webpackOptions = {}) {
     module: {
       rules: [
         {
-          test: /\.tmp$/i, // the raw-emitter will be applied to tmp file only
+          test: /\.tmp$/i,
           use: [
             {
               loader: path.resolve(__dirname, './raw-emitter.js'),
