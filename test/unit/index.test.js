@@ -41,22 +41,10 @@ describe('default test suite', () => {
   });
 
   it('can skip development environment set with a webpack option', async () => {
-    const webpack = createWebpack(
-      keeper,
-      {
-        blocks: [
-          {
-            name: 'dev',
-            prefix: '/*',
-            suffix: '*/',
-          },
-        ],
-      },
-      {mode: 'development'},
-    );
+    const webpack = createWebpack(keeper, {}, {mode: 'development'});
 
-    const input = '/* dev:start */ any /* dev:end */';
-    const expected = '/* dev:start */ any /* dev:end */';
+    const input = '/* devblock:start */ any /* devblock:end */';
+    const expected = '/* devblock:start */ any /* devblock:end */';
 
     const output = (await webpack.compile(input)).getCompiledFixture();
 
