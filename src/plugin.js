@@ -7,8 +7,8 @@ const {isEmptyArray, isNotSet} = require('./utils');
 
 const EXCLUDE_MODES = ['development'];
 const DEFAULT_NAME = 'devblock';
-const TAG_PREFIX = '/*';
-const TAG_SUFFIX = '*/';
+const DEFAULT_TAG_PREFIX = '/*';
+const DEFAULT_TAG_SUFFIX = '*/';
 
 class RemoveBlocksWebpackPlugin {
   constructor(options = {}) {
@@ -92,8 +92,8 @@ class RemoveBlocksWebpackPlugin {
   generateDefaultBlock(name = DEFAULT_NAME) {
     return {
       name: `${name}`,
-      prefix: TAG_PREFIX,
-      suffix: TAG_SUFFIX,
+      prefix: DEFAULT_TAG_PREFIX,
+      suffix: DEFAULT_TAG_SUFFIX,
     };
   }
 }
