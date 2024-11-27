@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const ENTRY_PATH = '../temp/';
-const ENTRY_FILE = 'fixture.tmp';
+const DEFAULT_ENTRY_PATH = '../temp/';
+const DEFAULT_ENTRY_FILE = 'fixture.tmp';
 
 class Entry {
   file;
@@ -13,8 +13,8 @@ class Entry {
    */
   constructor() {}
 
-  open(file = ENTRY_FILE) {
-    file = path.join(__dirname, ENTRY_PATH, file);
+  open(file = DEFAULT_ENTRY_FILE) {
+    file = path.join(__dirname, DEFAULT_ENTRY_PATH, file);
 
     try {
       fs.openSync(file, 'w');
