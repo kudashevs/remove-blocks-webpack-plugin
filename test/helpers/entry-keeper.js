@@ -6,6 +6,7 @@ const DEFAULT_ENTRY_FILE = 'fixture.tmp';
 
 class Entry {
   file;
+  fd;
 
   /**
    * The constructor does not create any files because of the symmetry principle.
@@ -17,7 +18,7 @@ class Entry {
     file = path.join(__dirname, DEFAULT_ENTRY_PATH, file);
 
     try {
-      fs.openSync(file, 'w');
+      Entry.fd = fs.openSync(file, 'w');
     } catch (err) {
       throw new Error(`Cannot create a file ${file} because ${err.message}`);
     }
@@ -50,6 +51,7 @@ class Entry {
   }
 
   close() {
+    fs.close(Entry.fd);
     fs.unlinkSync(Entry.file);
   }
 }
