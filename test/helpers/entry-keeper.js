@@ -18,41 +18,41 @@ class Entry {
     const fullPath = path.join(__dirname, DEFAULT_ENTRY_PATH, file);
 
     try {
-      Entry.fd = fs.openSync(fullPath, 'w');
+      this.fd = fs.openSync(fullPath, 'w');
     } catch (err) {
       throw new Error(`Cannot create a file ${fullPath} because ${err.message}`);
     }
 
-    Entry.file = fullPath;
+    this.file = fullPath;
   }
 
   write(data) {
     try {
-      fs.writeFileSync(Entry.file, data, {encoding: 'utf-8', flag: 'w'});
+      fs.writeFileSync(this.file, data, {encoding: 'utf-8', flag: 'w'});
     } catch (err) {
-      throw new Error(`Cannot write to file ${Entry.file} because ${err.message}`);
+      throw new Error(`Cannot write to file ${this.file} because ${err.message}`);
     }
   }
 
   read() {
     try {
-      return fs.readFileSync(Entry.file, {encoding: 'utf-8'});
+      return fs.readFileSync(this.file, {encoding: 'utf-8'});
     } catch (err) {
-      throw new Error(`Cannot read file ${Entry.file} because ${err.message}`);
+      throw new Error(`Cannot read file ${this.file} because ${err.message}`);
     }
   }
 
   path() {
-    return Entry.file;
+    return this.file;
   }
 
   exists() {
-    return fs.existsSync(Entry.file);
+    return fs.existsSync(this.file);
   }
 
   close() {
-    fs.close(Entry.fd);
-    fs.unlinkSync(Entry.file);
+    fs.close(this.fd);
+    fs.unlinkSync(this.file);
   }
 }
 
