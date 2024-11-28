@@ -15,15 +15,15 @@ class Entry {
   constructor() {}
 
   open(file = DEFAULT_ENTRY_FILE) {
-    file = path.join(__dirname, DEFAULT_ENTRY_PATH, file);
+    const fullPath = path.join(__dirname, DEFAULT_ENTRY_PATH, file);
 
     try {
-      Entry.fd = fs.openSync(file, 'w');
+      Entry.fd = fs.openSync(fullPath, 'w');
     } catch (err) {
-      throw new Error(`Cannot create a file ${file} because ${err.message}`);
+      throw new Error(`Cannot create a file ${fullPath} because ${err.message}`);
     }
 
-    Entry.file = file;
+    Entry.file = fullPath;
   }
 
   write(data) {
