@@ -15,6 +15,11 @@ class RemoveBlocksWebpackPlugin {
     this.options = options;
   }
 
+  /**
+   * @param {Object.<string, any>} compiler
+   *
+   * @throws {Error} It throws an Error when options do not match the schema.
+   */
   apply(compiler) {
     const pluginName = 'RemoveBlocksWebpackPlugin';
     const isWebpack5 = compiler.webpack && compiler.webpack.version >= '5';
@@ -68,6 +73,14 @@ class RemoveBlocksWebpackPlugin {
     return EXCLUDE_MODES.includes(mode);
   }
 
+  /**
+   * @param {string} content
+   * @param {Object} options
+   * @param {Array<string|{name: string, prefix: string, suffix: string}>|undefined} [options.blocks]
+   * @return {string}
+   *
+   * @throws {Error} It throws an Error when options do not match the schema.
+   */
   remove(content, options) {
     if (this.shouldUseDefaults(options)) {
       options.blocks = [this.generateDefaultBlock()];
@@ -79,7 +92,7 @@ class RemoveBlocksWebpackPlugin {
   /**
    * @param {Object} options
    * @param {Array<string|Object>|undefined} [options.blocks]
-   * @returns {boolean}
+   * @return {boolean}
    */
   shouldUseDefaults(options) {
     return isNotSet(options.blocks) || isEmptyArray(options.blocks);
@@ -87,7 +100,7 @@ class RemoveBlocksWebpackPlugin {
 
   /**
    * @param {string} [name=DEFAULT_NAME]
-   * @return {{name:string, prefix: string, suffix: string}}
+   * @return {{name: string, prefix: string, suffix: string}}
    */
   generateDefaultBlock(name = DEFAULT_NAME) {
     return {
