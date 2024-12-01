@@ -32,7 +32,7 @@
     "webpack": ">=4.40.0"
   },
   "dependencies": {
-    "remove-blocks": "^1.0.0",
+    "remove-blocks": "^1.2.0",
     "webpack-sources": "^1.4.0"
   },
   "devDependencies": {
