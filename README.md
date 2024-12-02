@@ -12,6 +12,7 @@ npm install --save-dev remove-blocks-webpack-plugin
 yarn add --dev remove-blocks-webpack-plugin
 ```
 
+
 ## Options
 
 `blocks` is an array of blocks' representations. Each element of this array describes a unique pair of tags with name,
@@ -22,6 +23,8 @@ prefix: '/*'                   # a string defines the beginning of a tag
 suffix: '*/'                   # a string defines the end of a tag
 replacement: 'optional'        # a string defines a substitution for a removed block
 ```
+
+The plugin supports zero config. When no options are provided, it uses default name, prefix and suffix values.
 
 
 ## Usage example
